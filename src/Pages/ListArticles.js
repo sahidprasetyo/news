@@ -8,10 +8,13 @@ const ListArticles = () => {
 
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingDetail, setLoadingDetail] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
   const [cart, setCart] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  
+  const [modalActive, setModalActive] = useState(false);
+  const [popupArticle, setPopupArticle] = useState({});
+
   const initWallet = JSON.parse(localStorage.getItem('wallet'));
   const [myWallet, setMyWallet] = useState(initWallet);
 
@@ -119,6 +122,15 @@ const ListArticles = () => {
     }
   };
 
+  const detailArticle = (item) => {
+    setModalActive(true);
+    setLoadingDetail(true);
+    setTimeout(() => {
+      setPopupArticle(item);
+      setLoadingDetail(false);
+    }, 2000)
+  };
+
   useEffect(() => localStorage.setItem('wallet', 100000))
   useEffect(() => getArticles('emailed'), []);
   useEffect(() => {
@@ -171,7 +183,6 @@ const ListArticles = () => {
                         </small>
                         <h5 className="title is-5 has-text-link mb-1">{ item.title }</h5>
                         { item.abstract }
-
                         <div className="buttons mt-3">
                         <button
                           className="button is-small is-primary is-light"
@@ -179,7 +190,11 @@ const ListArticles = () => {
                           onClick={() => addToCart(item)}>
                           Add to Cart
                           </button>
-                        <button className="button is-small is-info is-inverted">Detail</button>
+                        <button
+                          className="button is-small is-info is-inverted"
+                          onClick={() => detailArticle(item)}>
+                          Detail
+                        </button>
                         </div>
                       </div>
                     </article>
@@ -195,6 +210,50 @@ const ListArticles = () => {
                 // />
               )
             }
+          </div>
+
+          <div className={`modal ${modalActive ? 'is-active' : ''}`}>
+            <div className="modal-background" onClick={() => setModalActive(false)}></div>
+            <div className="modal-card">
+              <header className="modal-card-head">
+                <p className="modal-card-title">Detail Article</p>
+                <button className="delete" aria-label="close" onClick={() => setModalActive(false)}></button>
+              </header>
+              <section className="modal-card-body">
+                <div className="columns">
+                  {
+                    loadingDetail ? 
+                    ( <p>Loading...</p> ) :
+                    (
+                      <div className="column">
+                        <div className="has-text-centered">
+                          {
+                            popupArticle.media.length > 0 ? (
+                              <img src={ popupArticle.media[0]["media-metadata"][2].url } alt={ popupArticle.title } />
+                            ) : (
+                              <img src="http://via.placeholder.com/210x140" alt="Placeholder" />
+                            )
+                          }
+                        </div>
+                        <h4 className="title is-4 has-text-link mb-2">{ popupArticle.title }</h4>
+                        <small className="mr-2"><strong>Published: { popupArticle.published_date }</strong></small>
+                        <small><strong>By: { popupArticle.byline }</strong></small>
+                        <p>{ popupArticle.abstract }</p>
+                        <div className="mt-5">
+                        {
+                          popupArticle.des_facet.map((item, index) => {
+                            return (
+                              <span key={index} class="tag is-danger is-light mr-1 mb-1">{ item }</span>
+                            )
+                          })
+                        }
+                        </div>
+                      </div>
+                    )
+                  }
+                </div>
+              </section>
+            </div>
           </div>
         </div>
         <div className="column is-4">
