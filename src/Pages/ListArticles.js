@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-// import Article from '../Components/Article';
 import MainLayout from '../Layout/MainLayout';
+// import Article from '../Components/Article';
 
 const ListArticles = () => {
 
@@ -103,10 +103,20 @@ const ListArticles = () => {
     setCart(newCart);
   };
   
-  const checkoutCart = (totalPrice) => {
-    const remain = localStorage.setItem('wallet', totalPrice)
-    console.log(remain)
-    // setMyWallet(remain)
+  const checkoutCart = () => {
+    const arr = JSON.parse(localStorage.getItem('myArticles')) || [];
+    const isExist = arr.findIndex((exist) => exist);
+
+    if(isExist < 0) {
+      localStorage.setItem('myArticles', JSON.stringify(cart));
+      setCart([])
+    } else {
+      let emptyArr = [];
+      emptyArr = arr
+      emptyArr.push(...cart);
+      localStorage.setItem('myArticles', JSON.stringify(emptyArr));
+      setCart([])
+    }
   };
 
   useEffect(() => localStorage.setItem('wallet', 100000))
@@ -124,18 +134,18 @@ const ListArticles = () => {
       <div className="columns">
         <div className="column is-8">
           <div className="p-2 has-text-right">
-          <div className="select">
-            <select onChange={(e) => getArticles(e.target.value)} value={selectedOption}>
-              <option disabled>Select filter</option>
-              {
-                filter.map((item, index) => {
-                  return (
-                    <option key={index} value={item.value}>{ item.title }</option>
-                  )
-                })
-              }
-            </select>
-          </div>
+            <div className="select">
+              <select onChange={(e) => getArticles(e.target.value)} value={selectedOption}>
+                <option disabled>Select filter</option>
+                {
+                  filter.map((item, index) => {
+                    return (
+                      <option key={index} value={item.value}>{ item.title }</option>
+                    )
+                  })
+                }
+              </select>
+            </div>
           </div>
           <div className="p-2">
             { loading ? (
@@ -143,7 +153,7 @@ const ListArticles = () => {
               ) : (
                 articles.map((item, index) => {
                   return (
-                    <article key={index} className="media is-align-items-center" style={{ cursor: "pointer" }}>
+                    <article key={index} className="media is-align-items-center">
                       <div className="media-left">
                         <figure className="image is-128x128 is-flex is-align-items-center is-justify-content-center">
                           {
@@ -165,10 +175,11 @@ const ListArticles = () => {
                         <div className="buttons mt-3">
                         <button
                           className="button is-small is-primary is-light"
+                          style={{ cursor: "pointer" }}
                           onClick={() => addToCart(item)}>
-                        Add to Cart
-                        </button>
-                        <button className="button is-small is-info is-inverted ">Detail</button>
+                          Add to Cart
+                          </button>
+                        <button className="button is-small is-info is-inverted">Detail</button>
                         </div>
                       </div>
                     </article>
@@ -222,7 +233,7 @@ const ListArticles = () => {
           <button
             className="button is-success is-fullwidth"
             disabled={cart.length === 0}
-            onClick={() => checkoutCart(myWallet - totalAmount)}>
+            onClick={() => checkoutCart()}>
               Checkout
           </button>
         </div>
