@@ -15,8 +15,8 @@ const ListArticles = () => {
   const [modalActive, setModalActive] = useState(false);
   const [popupArticle, setPopupArticle] = useState({});
 
-  const initWallet = JSON.parse(localStorage.getItem('wallet'));
-  const [myWallet, setMyWallet] = useState(initWallet);
+  // const initWallet = JSON.parse(localStorage.getItem('wallet'));
+  // const [myWallet, setMyWallet] = useState(initWallet);
 
   const filter = [
     {
