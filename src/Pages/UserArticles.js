@@ -92,7 +92,7 @@ const UserArticles = () => {
                             popupArticle.media.length > 0 ? (
                               <img src={ popupArticle.media[0]["media-metadata"][2].url } alt={ popupArticle.title } />
                             ) : (
-                              <img src="http://via.placeholder.com/210x140" alt="Placeholder" />
+                              <img src="https://via.placeholder.com/210x140" alt="Placeholder" />
                             )
                           }
                         </div>
